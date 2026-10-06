@@ -25,10 +25,6 @@ public class Teleop extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        // robot = new Robot();
-        // //Calls the init() function from Robot.java
-        // robot.init();
-
         // Initialize controllers
         driverController = new Gamepad();
         operatorController = new Gamepad();
@@ -46,10 +42,10 @@ public class Teleop extends LinearOpMode {
 
         // We're using encoders... right??
         // I wrote these in here for when we're ready for encoders, but for our first test they may not be implemented yet.
-        frontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        frontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        // frontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        // frontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        // backLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        // backRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //Telemetry prints status updates and sensor data to the driver hub
         telemetry.addData("Status", "Initialized");
@@ -64,14 +60,16 @@ public class Teleop extends LinearOpMode {
     }
 
     public void driveRobot(double y, double x, double rx) {
-            // Denominator is the largest motor power (absolute value) or 1
-            // This ensures all the powers maintain the same ratio,
-            // but only if at least one is out of the range [-1, 1]
-            double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
-            double frontLeftPower = (y + x + rx) / denominator;
-            double backLeftPower = (y - x + rx) / denominator;
-            double frontRightPower = (y - x - rx) / denominator;
-            double backRightPower = (y + x - rx) / denominator;
+            // maxPower is the largest motor power (absolute value) or 1
+            double maxPower = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
+            
+            //Basically what this does is it reads the value of the joysticks (a value between -1 and 1) 
+            //in each direction (x is horizontal, y is vertical, and rx is rotational) 
+            //and then divides it by the max total power (100% speed represented by 1.0). 
+            double frontLeftPower = (y + x + rx) / maxPower;
+            double backLeftPower = (y - x + rx) / maxPower;
+            double frontRightPower = (y - x - rx) / maxPower;
+            double backRightPower = (y + x - rx) / maxPower;
 
             // Output the values to the motor drives.
             frontLeftDrive.setPower(frontLeftPower);
