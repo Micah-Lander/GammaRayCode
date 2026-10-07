@@ -8,9 +8,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import org.firstinspires.ftc.teamcode.Robot;
+//import org.firstinspires.ftc.teamcode.Robot;
 
-@TeleOp(name="Teleop", group="Teleop")
+@TeleOp(name="Gamma Ray Teleop")
 public class Teleop extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
@@ -30,10 +30,10 @@ public class Teleop extends LinearOpMode {
         operatorController = new Gamepad();
 
         // Initialize drive motors
-        frontLeftDrive  = hardwareMap.get(DcMotor.class, "frontLeftDrive");
-        frontRightDrive = hardwareMap.get(DcMotor.class, "frontRightDrive");
-        backLeftDrive = hardwareMap.get(DcMotor.class, "backLeftDrive");
-        backRightDrive = hardwareMap.get(DcMotor.class, "backRightDrive");
+        frontLeftDrive  = hardwareMap.get(DcMotor.class, "frontLeftDrive"); //port 0
+        frontRightDrive = hardwareMap.get(DcMotor.class, "frontRightDrive"); //port 1
+        backLeftDrive = hardwareMap.get(DcMotor.class, "backLeftDrive"); //port 2
+        backRightDrive = hardwareMap.get(DcMotor.class, "backRightDrive"); //port 3
 
         //If the robot drives backwards, reverse the left side motors instead
         frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -55,12 +55,20 @@ public class Teleop extends LinearOpMode {
         telemetry.update();
 
         while (opModeIsActive()) {
-            driveRobot(driverController.left_stick_y, driverController.left_stick_x, driverController.right_stick_x);
+           // driveRobot(driverController.left_stick_y, driverController.left_stick_x, driverController.right_stick_x);
+           if (driverController.leftBumperWasPressed()) {
+               telemetry.addData("Yes?", "Yes?");
+               telemetry.update();
+               frontLeftDrive.setPower(1.0);
+           } else{
+               frontLeftDrive.setPower(0.0);
+           }
+           
         }
     }
 
     public void driveRobot(double y, double x, double rx) {
-            // maxPower is the largest motor power (absolute value) or 1
+            // maxPower is the largest motor power possible (absolute value) 1 or 100%
             double maxPower = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
             
             //Basically what this does is it reads the value of the joysticks (a value between -1 and 1) 
