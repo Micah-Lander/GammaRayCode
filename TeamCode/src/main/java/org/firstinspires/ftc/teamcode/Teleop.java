@@ -49,20 +49,23 @@ public class Teleop extends LinearOpMode {
 
         //Telemetry prints status updates and sensor data to the driver hub
         telemetry.addData("Status", "Initialized");
+        telemetry.update();
         // Robot code won't start until the start button on the driver hub is pressed
         waitForStart();
         runtime.reset();
-        telemetry.update();
+
 
         while (opModeIsActive()) {
+            telemetry.addData("Status", "Made it to the active loop");
            // driveRobot(driverController.left_stick_y, driverController.left_stick_x, driverController.right_stick_x);
-           if (driverController.leftBumperWasPressed()) {
-               telemetry.addData("Yes?", "Yes?");
-               telemetry.update();
+           if (driverController.left_bumper) {
+               telemetry.addData("Did the bumper get pressed: ", "Yes");
                frontLeftDrive.setPower(1.0);
            } else{
+                telemetry.addData("Did the bumper get pressed: ", "No");
                frontLeftDrive.setPower(0.0);
            }
+           telemetry.update();
            
         }
     }
