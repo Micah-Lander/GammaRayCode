@@ -13,6 +13,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 @TeleOp(name="Gamma Ray Teleop")
 public class Teleop extends LinearOpMode {
 
+    //3333-RC
+    //stem stem
+    //http://192.168.43.1:8080
     private ElapsedTime runtime = new ElapsedTime();
    // Robot robot;
     private DcMotor frontLeftDrive;
@@ -30,10 +33,10 @@ public class Teleop extends LinearOpMode {
         operatorController = new Gamepad();
 
         // Initialize drive motors
-        frontLeftDrive  = HardwareMap.get(DcMotor.class, "frontLeftDrive"); //port 0
-        frontRightDrive = HardwareMap.get(DcMotor.class, "frontRightDrive"); //port 1
-        backLeftDrive = HardwareMap.get(DcMotor.class, "backLeftDrive"); //port 2
-        backRightDrive = HardwareMap.get(DcMotor.class, "backRightDrive"); //port 3
+        frontLeftDrive  = hardwareMap.dcMotor.get("frontLeftDrive"); //port 0
+        frontRightDrive = hardwareMap.dcMotor.get("frontRightDrive"); //port 1
+        backLeftDrive = hardwareMap.dcMotor.get("backLeftDrive"); //port 2
+        backRightDrive = hardwareMap.dcMotor.get("backRightDrive"); //port 3
 
         //If the robot drives backwards, reverse the left side motors instead
         frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -57,13 +60,15 @@ public class Teleop extends LinearOpMode {
 
         while (opModeIsActive()) {
             telemetry.addData("Status", "Made it to the active loop");
+            int driver_id = driverController.getGamepadId();
+            telemetry.addData("ID", driver_id);
            // driveRobot(driverController.left_stick_y, driverController.left_stick_x, driverController.right_stick_x);
-           if (driverController.left_bumper) {
+           if (gamepad1.left_bumper) {
                 telemetry.addData("Did the bumper get pressed: ", "Yes");
-                frontLeftDrive.setPower(1.0);
+               // frontLeftDrive.setPower(1.0);
            } else{
-                telemetry.addData("Did the bumper get pressed: ", "No");
-                frontLeftDrive.setPower(0.0);
+               // telemetry.addData("Did the bumper get pressed: ", "No");
+                //frontLeftDrive.setPower(0.0);
            }
            telemetry.update();
            
