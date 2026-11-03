@@ -15,6 +15,10 @@ public class Robot {
     private DcMotor backLeftDrive;
     private DcMotor backRightDrive;
 
+    //Define mechanism motors
+    private DcMotor shooterMotor;
+    private DcMotor intakeMotor;
+
     // Define a constructor that allows the OpMode to pass a reference to itself.
     public Robot (LinearOpMode opMode) {
         this.opMode = opMode;
@@ -32,6 +36,8 @@ public class Robot {
         frontRightDrive = opMode.HardwareMap.get(DcMotor.class, "frontRightDrive");
         backLeftDrive = opMode.HardwareMap.get(DcMotor.class, "backLeftDrive");
         backRightDrive = opMode.HardwareMap.get(DcMotor.class, "backRightDrive");
+        shooterMotor = opMode.HardwareMap.get(DcMotor.class, "shooterMotor");
+        intakeMotor = opMode.HardwareMap.get(DcMotor.class, "intakeMotor");
 
         //If the robot drives backwards, reverse the left side motors instead
         frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -43,6 +49,8 @@ public class Robot {
         frontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        shooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         //Telemetry! For those unfamiliar, telemetry is just a print out of data or a status update
         opMode.telemetry.addData(">", "Hardware Initialized");
@@ -66,5 +74,12 @@ public class Robot {
             backLeftDrive.setPower(backLeftPower);
             frontRightDrive.setPower(frontRightPower);
             backRightDrive.setPower(backRightPower);
+    }
+    public void setShooterPower(double power) {
+        shooterMotor.setPower(power);
+    }
+
+    public void setIntakePower(double power) {
+        intakeMotor.setPower(power);
     }
 }

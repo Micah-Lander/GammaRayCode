@@ -17,12 +17,16 @@ public class Teleop extends LinearOpMode {
     private Robot robot;
     private Gamepad driverController;
     private Gamepad operatorController;
+    private double shooterPower;
+    private double intakePower;
 
     @Override
     public void runOpMode() {
         // Initialize controllers
         driverController = new Gamepad();
         operatorController = new Gamepad();
+        driverController.setGamepadID(0);
+        operatorController.setGamepadID(1);
         robot = new Robot();
 
         robot.init();
@@ -36,6 +40,24 @@ public class Teleop extends LinearOpMode {
         while (opModeIsActive()) {
             telemetry.addData("Status", "Made it to the active loop");
             robot.driveRobot(driverController.left_stick_y, driverController.left_stick_x, driverController.right_stick_x);
+            
+            //Shooter is set to use the right trigger right now
+            if(operatorController.right_trigger > 0.05){
+                shooterPower = 0.6;
+                robot.setShooterPower(shooterPower);
+            } else{
+                shooterPower = 0.0;
+                robot.setShooterPower(shooterPower);
+            }
+
+            //Intake is set to use button b right now
+            if (operatorController.b){
+                intakePower = 0.6;
+                robot.setIntakePower(intakePower);
+            } else{
+                intakePower = 0.0;
+                robot.setIntakePower(intakePower);
+            }
             telemetry.update();
         }
     }
