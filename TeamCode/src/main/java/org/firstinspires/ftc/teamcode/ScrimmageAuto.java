@@ -18,20 +18,9 @@ public class ScrimmageAuto extends LinearOpMode {
     private DcMotor backLeftDrive;
     private DcMotor backRightDrive;
 
-    private ElapsedTime runtime = new ElapsedTime();
+    private double driveGearRatio = 5.0; // Gear ratio guess, high key don't know if it's right or not
 
-    // Calculate the COUNTS_PER_INCH for your specific drive train.
-    // Go to your motor vendor website to determine your motor's COUNTS_PER_MOTOR_REV
-    // For external drive gearing, set DRIVE_GEAR_REDUCTION as needed.
-    // For example, use a value of 2.0 for a 12-tooth spur gear driving a 24-tooth spur gear.
-    // This is gearing DOWN for less speed and more torque.
-    // For gearing UP, use a gear ratio less than 1.0. Note this will affect the direction of wheel rotation.
-    static final double     COUNTS_PER_MOTOR_REV    = 1440 ;    // eg: TETRIX Motor Encoder
-    static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // No External Gearing.
-    static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
-    static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415);
-    static final double     DRIVE_SPEED             = 0.6;
-    static final double     TURN_SPEED              = 0.5;
+    private ElapsedTime runtime = new ElapsedTime();
 
     @Override
     public void runOpMode() {
@@ -68,16 +57,13 @@ public class ScrimmageAuto extends LinearOpMode {
                           backRightDrive.getCurrentPosition());
         telemetry.update();
 
-        // Wait for the game to start (driver presses START)
         waitForStart();
 
-        // Step through each leg of the path,
-        // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        driveForward(0.5, 6); // Example: drive forward at 0.5 speed to 6 inches
+        //NOTE: Right now this takes ticks, not feet. I need to do the conversion math still.
+        driveForward(0.5, 0.5); // Example: drive forward at 0.5 speed to 0.5 feet
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
-        sleep(1000);  // pause to display final telemetry message.
     }
 
     /*
@@ -89,9 +75,13 @@ public class ScrimmageAuto extends LinearOpMode {
      *  3) Driver stops the OpMode running.
      */
     public void driveForward(double speed, double target) {
-        double targetPosition = target;
-        double distanceTravelled = frontLeftDrive.getCurrentPosition();
-        double distanceToTarget = targetPosition - distanceTravelled;
+        double targetPositionFeet = target;
+        double ticksPerRev = 28 * driveGearRatio; // REV Ultraplanetary Motor has a base tick count of 28 per revolution, need to multiply it by gear ratio though
+        //NOTE: When measuring the radius of the wheel, get it in feet, not inches
+        double distancePerTickInFeet = (0.25 * 3.1415) / ticksPerRev; // Convert ticks per revolution to ticks per foot based on wheel circumference
+        double targetPositionTicks = targetPositionFeet / distancePerTickInFeet;
+        double distanceTravelled = frontLeftDrive.getCurrentPosition(); // Get the current position in ticks
+        double distanceToTarget = targetPositionTicks - distanceTravelled;
 
         if (distanceToTarget > 0) {
             frontLeftDrive.setPower(speed);
