@@ -23,20 +23,37 @@ public class Teleop extends LinearOpMode {
     private DcMotor backLeftDrive;
     private DcMotor backRightDrive;
 
+     //Define mechanism motors
+    private DcMotor shooterMotor;
+    private DcMotor intakeMotor;
+
     private Gamepad driverController;
     private Gamepad operatorController;
+
+     private double shooterPower;
+    private double intakePower;
 
     @Override
     public void runOpMode() {
         // Initialize controllers
         driverController = new Gamepad();
         operatorController = new Gamepad();
+        
+        driverController.setGamepadId(0);
+        operatorController.setGamepadId(1);
+        
+        
 
         // Initialize drive motors
         frontLeftDrive  = hardwareMap.dcMotor.get("frontLeftDrive"); //port 0
         frontRightDrive = hardwareMap.dcMotor.get("frontRightDrive"); //port 1
         backLeftDrive = hardwareMap.dcMotor.get("backLeftDrive"); //port 2
         backRightDrive = hardwareMap.dcMotor.get("backRightDrive"); //port 3
+
+        shooterMotor = hardwareMap.dcMotor.get("shooterMotor"); //port 0 expansion
+       // intakeMotor = opMode.hardwareMap.get(DcMotor.class, "intakeMotor"); // port 1 expansion
+
+        
 
         //If the robot drives backwards, reverse the left side motors instead
         frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -50,6 +67,9 @@ public class Teleop extends LinearOpMode {
         // backLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         // backRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        shooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+       // intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         //Telemetry prints status updates and sensor data to the driver hub
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -62,14 +82,28 @@ public class Teleop extends LinearOpMode {
             telemetry.addData("Status", "Made it to the active loop");
             int driver_id = driverController.getGamepadId();
             telemetry.addData("ID", driver_id);
-           // driveRobot(driverController.left_stick_y, driverController.left_stick_x, driverController.right_stick_x);
-           if (gamepad1.left_bumper) {
-                telemetry.addData("Did the bumper get pressed: ", "Yes");
-               // frontLeftDrive.setPower(1.0);
-           } else{
-               // telemetry.addData("Did the bumper get pressed: ", "No");
-                //frontLeftDrive.setPower(0.0);
-           }
+            driverController = gamepad1;
+            operatorController = gamepad2;
+            driveRobot(driverController.left_stick_y, driverController.left_stick_x, driverController.right_stick_x);
+           
+            //Shooter is set to use the right trigger right now
+            if(operatorController.right_trigger > 0.05){
+                shooterPower = 0.6;
+                setShooterPower(shooterPower);
+            } else{
+                shooterPower = 0.0;
+                setShooterPower(shooterPower);
+            }
+
+            //Intake is set to use button b right now
+            // if (operatorController.b){
+            //     intakePower = 0.6;
+            //     robot.setIntakePower(intakePower);
+            // } else{
+            //     intakePower = 0.0;
+            //     robot.setIntakePower(intakePower);
+            // }
+
            telemetry.update();
            
         }
@@ -93,4 +127,12 @@ public class Teleop extends LinearOpMode {
             frontRightDrive.setPower(frontRightPower);
             backRightDrive.setPower(backRightPower);
     }
+
+     public void setShooterPower(double power) {
+        shooterMotor.setPower(power);
+    }
+
+    // public void setIntakePower(double power) {
+    //     intakeMotor.setPower(power);
+    // }
 }
