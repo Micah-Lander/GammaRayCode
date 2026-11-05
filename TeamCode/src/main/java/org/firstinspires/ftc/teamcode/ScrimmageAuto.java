@@ -18,7 +18,7 @@ public class ScrimmageAuto extends LinearOpMode {
     private DcMotor backLeftDrive;
     private DcMotor backRightDrive;
 
-    private double driveGearRatio = 5.0; // Gear ratio guess, high key don't know if it's right or not
+    private double driveGearRatio = 20; // Gear ratio guess, high key don't know if it's right or not
 
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -78,7 +78,7 @@ public class ScrimmageAuto extends LinearOpMode {
         double targetPositionFeet = target;
         double ticksPerRev = 28 * driveGearRatio; // REV Ultraplanetary Motor has a base tick count of 28 per revolution, need to multiply it by gear ratio though
         //NOTE: When measuring the radius of the wheel, get it in feet, not inches
-        double distancePerTickInFeet = (0.25 * 3.1415) / ticksPerRev; // Convert ticks per revolution to ticks per foot based on wheel circumference
+        double distancePerTickInFeet = (1.5 * 3.1415) / ticksPerRev; // Convert ticks per revolution to ticks per foot based on wheel circumference
         double targetPositionTicks = targetPositionFeet / distancePerTickInFeet;
         double distanceTravelled = frontLeftDrive.getCurrentPosition(); // Get the current position in ticks
         double distanceToTarget = targetPositionTicks - distanceTravelled;
@@ -94,5 +94,9 @@ public class ScrimmageAuto extends LinearOpMode {
             backLeftDrive.setPower(0);
             backRightDrive.setPower(0);
         }
+        frontLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 }
