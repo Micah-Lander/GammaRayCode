@@ -51,7 +51,7 @@ public class Teleop extends LinearOpMode {
         backRightDrive = hardwareMap.dcMotor.get("backRightDrive"); //port 3
 
         shooterMotor = hardwareMap.dcMotor.get("shooterMotor"); //port 0 expansion
-       // intakeMotor = opMode.hardwareMap.get(DcMotor.class, "intakeMotor"); // port 1 expansion
+        intakeMotor = hardwareMap.dcMotor.get("intakeMotor"); // port 1 expansion
 
         
 
@@ -68,7 +68,7 @@ public class Teleop extends LinearOpMode {
         // backRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         shooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-       // intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         //Telemetry prints status updates and sensor data to the driver hub
         telemetry.addData("Status", "Initialized");
@@ -96,13 +96,13 @@ public class Teleop extends LinearOpMode {
             }
 
             //Intake is set to use button b right now
-            // if (operatorController.b){
-            //     intakePower = 0.6;
-            //     robot.setIntakePower(intakePower);
-            // } else{
-            //     intakePower = 0.0;
-            //     robot.setIntakePower(intakePower);
-            // }
+            if (operatorController.b){
+                intakePower = 0.6;
+                intakeMotor.setPower(intakePower);
+            } else{
+                intakePower = 0.0;
+                intakeMotor.setPower(intakePower);
+            }
 
            telemetry.update();
            
