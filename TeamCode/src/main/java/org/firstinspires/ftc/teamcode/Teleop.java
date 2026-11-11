@@ -42,8 +42,6 @@ public class Teleop extends LinearOpMode {
         driverController.setGamepadId(0);
         operatorController.setGamepadId(1);
         
-        
-
         // Initialize drive motors
         frontLeftDrive  = hardwareMap.dcMotor.get("frontLeftDrive"); //port 0
         frontRightDrive = hardwareMap.dcMotor.get("frontRightDrive"); //port 1
@@ -52,8 +50,6 @@ public class Teleop extends LinearOpMode {
 
         shooterMotor = hardwareMap.dcMotor.get("shooterMotor"); //port 0 expansion
         intakeMotor = hardwareMap.dcMotor.get("intakeMotor"); // port 1 expansion
-
-        
 
         //If the robot drives backwards, reverse the left side motors instead
         frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -76,7 +72,6 @@ public class Teleop extends LinearOpMode {
         // Robot code won't start until the start button on the driver hub is pressed
         waitForStart();
         runtime.reset();
-
 
         while (opModeIsActive()) {
             telemetry.addData("Status", "Made it to the active loop");
