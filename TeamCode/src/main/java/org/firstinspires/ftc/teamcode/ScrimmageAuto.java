@@ -82,10 +82,6 @@ public class ScrimmageAuto extends LinearOpMode {
         double targetPositionWheelRotations = targetPositionInches / (1.5 * Math.PI);
         int targetPositionTicks = (int) (targetPositionWheelRotations * ticksPerRev);
         
-        //Strafing Math?
-        double targetPositionWheelRotationsStrafing = targetPositionInches*2 / (1.5 * Math.PI);
-        int targetPositionTicksStrafing = (int) (targetPositionWheelRotationsStrafing * ticksPerRev);
-
         // Resets the encoder positions to make sure the target position is accurate
         frontLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frontRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -96,7 +92,7 @@ public class ScrimmageAuto extends LinearOpMode {
 
         
 
-while ((frontLeftDrive.getCurrentPosition() < targetPositionTicks) && opModeIsActive() && (direction.equals("forward") || direction.equals("backward"))) {
+while ((frontLeftDrive.getCurrentPosition() < targetPositionTicks) && opModeIsActive()) {
         
         if (direction.equals("forward")){
         int targetPositionTicksWithDirection = targetPositionTicks;
@@ -119,7 +115,7 @@ while ((frontLeftDrive.getCurrentPosition() < targetPositionTicks) && opModeIsAc
         frontRightDrive.setPower(speed);
         backLeftDrive.setPower(speed);
         backRightDrive.setPower(speed);
-        telemetry.addData("Status", "Done");
+        telemetry.addData("Status", "Done driving forward");
         telemetry.update();
         }
         else if (direction.equals("backward")){
@@ -149,7 +145,65 @@ while ((frontLeftDrive.getCurrentPosition() < targetPositionTicks) && opModeIsAc
         frontRightDrive.setPower(speed);
         backLeftDrive.setPower(speed);
         backRightDrive.setPower(speed);
-        telemetry.addData("Status", "Did it work?");
+        telemetry.addData("Status", "Done driving backward");
+        telemetry.update();
+
+        }  else if (direction.equals("left")){
+        
+        // frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
+        // frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
+        // backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
+        // backRightDrive.setDirection(DcMotor.Direction.REVERSE);
+        
+        frontLeftDrive.setTargetPosition(-targetPositionTicks);
+        frontRightDrive.setTargetPosition(targetPositionTicks);
+        backLeftDrive.setTargetPosition(targetPositionTicks);
+        backRightDrive.setTargetPosition(-targetPositionTicks);
+        telemetry.addData("Status", "Target position set");
+        telemetry.update();
+        
+        // Tells the motors to go
+        frontLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        telemetry.addData("Status", "Encoders running to position");
+        telemetry.update();
+        
+        frontLeftDrive.setPower(speed);
+        frontRightDrive.setPower(speed);
+        backLeftDrive.setPower(speed);
+        backRightDrive.setPower(speed);
+        telemetry.addData("Status", "Done strafing left");
+        telemetry.update();
+        }  else if (direction.equals("right")){
+        int targetPositionTicksWithDirection = -targetPositionTicks;
+        
+        // frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
+        // frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
+        // backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
+        // backRightDrive.setDirection(DcMotor.Direction.REVERSE);
+        
+        frontLeftDrive.setTargetPosition(targetPositionTicks);
+        frontRightDrive.setTargetPosition(-targetPositionTicks);
+        backLeftDrive.setTargetPosition(-targetPositionTicks);
+        backRightDrive.setTargetPosition(targetPositionTicks);
+        telemetry.addData("Status", "Target position set");
+        telemetry.update();
+        
+        // Tells the motors to go
+        frontLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        telemetry.addData("Status", "Encoders running to position");
+        telemetry.update();
+        
+        frontLeftDrive.setPower(speed);
+        frontRightDrive.setPower(speed);
+        backLeftDrive.setPower(speed);
+        backRightDrive.setPower(speed);
+        telemetry.addData("Status", "Done strafing right");
         telemetry.update();
         } 
         
