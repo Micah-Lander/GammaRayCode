@@ -18,8 +18,6 @@ public class ScrimmageAuto extends LinearOpMode {
     private DcMotor backLeftDrive;
     private DcMotor backRightDrive;
 
-    private double driveGearRatio = 20; // Gear ratio guess, high key don't know if it's right or not
-
     private ElapsedTime runtime = new ElapsedTime();
 
     @Override
@@ -60,10 +58,12 @@ public class ScrimmageAuto extends LinearOpMode {
         waitForStart();
 
         //NOTE: Right now this takes ticks, not feet. I need to do the conversion math still.
-        driveForward(0.5, 0.5); // Example: drive forward at 0.5 speed to 0.5 feet
-
-        telemetry.addData("Path", "Complete");
-        telemetry.update();
+        driveForward(0.5, 1.75); // Example: drive forward at 0.5 speed to 0.5 feet
+      //  driveForward(-0.5, 1.0);
+        
+         //sleep(6000);
+        // telemetry.addData("Path", "Complete");
+        // telemetry.update();
     }
 
     /*
@@ -75,28 +75,43 @@ public class ScrimmageAuto extends LinearOpMode {
      *  3) Driver stops the OpMode running.
      */
     public void driveForward(double speed, double target) {
-        double targetPositionFeet = target;
-        double ticksPerRev = 28 * driveGearRatio; // REV Ultraplanetary Motor has a base tick count of 28 per revolution, need to multiply it by gear ratio though
-        //NOTE: When measuring the radius of the wheel, get it in feet, not inches
-        double distancePerTickInFeet = (1.5 * 3.1415) / ticksPerRev; // Convert ticks per revolution to ticks per foot based on wheel circumference
-        double targetPositionTicks = targetPositionFeet / distancePerTickInFeet;
-        double distanceTravelled = frontLeftDrive.getCurrentPosition(); // Get the current position in ticks
-        double distanceToTarget = targetPositionTicks - distanceTravelled;
+        double targetPositionInches = target * 12;
+        double ticksPerRev = 560/2.3; // According to REV docs if we have a 20:1 gear ratio
+        double targetPositionWheelRotations = targetPositionInches / (1.5 * Math.PI);
+        int targetPositionTicks = (int) (targetPositionWheelRotations * ticksPerRev);
 
-        if (distanceToTarget > 0) {
-            frontLeftDrive.setPower(speed);
-            frontRightDrive.setPower(speed);
-            backLeftDrive.setPower(speed);
-            backRightDrive.setPower(speed);
-        } else {
-            frontLeftDrive.setPower(0);
-            frontRightDrive.setPower(0);
-            backLeftDrive.setPower(0);
-            backRightDrive.setPower(0);
-        }
+        // Resets the encoder positions to make sure the target position is accurate
         frontLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frontRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    }
+        telemetry.addData("Status", "Encoders reset");
+        telemetry.update();
+
+        // Assigns the target position to each motor
+        frontLeftDrive.setTargetPosition(targetPositionTicks);
+        frontRightDrive.setTargetPosition(targetPositionTicks);
+        backLeftDrive.setTargetPosition(targetPositionTicks);
+        backRightDrive.setTargetPosition(targetPositionTicks);
+        telemetry.addData("Status", "Target position set");
+        telemetry.update();
+
+while (frontLeftDrive.getCurrentPosition() < targetPositionTicks) {
+        // Tells the motors to go
+        frontLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        telemetry.addData("Status", "Encoders running to position");
+        telemetry.update();
+
+        // Max speed the motors can run at
+        frontLeftDrive.setPower(speed);
+        frontRightDrive.setPower(speed);
+        backLeftDrive.setPower(speed);
+        backRightDrive.setPower(speed);
+        telemetry.addData("Status", "Did it work?");
+        telemetry.update();
+}
+    }   
 }
